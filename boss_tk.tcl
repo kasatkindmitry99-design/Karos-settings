@@ -8,13 +8,14 @@ array set cds {
     "Слобрет" {2 30}
     "Вулкан"  {2 30}
     "Снежка"  {2 30}
-    "Капилка" {3 30}
+    "Матка"    {4 00}
+    "Капилка" {3 00}
     "Капа"    {3 30}
     "Балка"   {7 30}
     "Король"  {7 30}
 }
 
-set boss_list {"Слобрет" "Вулкан" "Снежка" "Капилка" "Капа" "Балка" "Король"}
+set boss_list {"Слобрет" "Вулкан" "Снежка" "Матка" "Капилка" "Капа" "Балка" "Король"}
 
 # Инициализация файла
 if {![file exists $file]} {
@@ -89,10 +90,17 @@ proc safe_exit {} {
     exit
 }
 
+# Функция обновления часов в заголовке (без секунд, раз в минуту)
+proc update_title {} {
+    set current_time [clock format [clock seconds] -format "%H:%M"]
+    wm title . "Таймер Боссов — $current_time"
+    # Повторный вызов через 60000 мс (60 секунд / 1 минута)
+    after 60000 update_title
+}
+
 # Отключаем принятие фокуса ввода на уровне оконного менеджера X11
 wm focusmodel . passive
 wm attributes . -topmost 1
-wm title . "Таймер Боссов"
 . configure -background "#353535"
 
 # Указываем Cinnamon не передавать фокус этому окну
@@ -100,7 +108,7 @@ catch {wm attributes . -type utility}
 
 # Размеры окна
 set win_width 320
-set win_height 270
+set win_height 280
 set screen_width [winfo screenwidth .]
 set screen_height [winfo screenheight .]
 
@@ -157,3 +165,6 @@ grid .f.btn_save -row $row -column 1 -columnspan 2 -pady "8 2" -padx 3 -sticky e
 
 # Сохранение по Enter
 bind . <Return> save_all
+
+# Запуск обновления часов в заголовке
+update_title
